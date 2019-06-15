@@ -66,6 +66,10 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject ob = new JSONObject();
 
 
+                final Intent intent = new Intent(MainActivity.this, submitActivity.class);
+                intent.putExtra("username", name);
+                intent.putExtra("password", pass);
+
                 try {
 
                     ob.put("username", name);
@@ -103,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                                             @Override
                                             public void run() {
                                                 status.setText("Login Success");
-                                                startActivity(new Intent(MainActivity.this, submitActivity.class));
+                                                startActivity(intent);
                                             }
                                         });
 
