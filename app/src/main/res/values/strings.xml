@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Trafake</string>
+    <string name="username_text">Username</string>
+    <string name="password_text">Password</string>
+    <string name="login_btn_text">Login</string>>
+
+
+</resources>

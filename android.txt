@@ -1,0 +1,418 @@
+###########################                                            ###########################
+###########################           PERMISSIONS         ###########################
+###########################                                            ###########################
+
+    
+                                      
+### Declare INTERNET permission in manifest ###
+
+       <uses-permission android:name="android.permission.INTERNET"/>
+
+
+
+### Declare CAMERA feature in manifest ###
+
+        <uses-feature android:name="android.hardware.camera" android:required="true" />
+
+
+
+### Check permissions function ###
+
+    protected boolean checkPermissions(String[] permissions) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(MainActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+            return true;
+     }
+
+
+
+### Request permissions ###
+
+        String[] permissions = {Manifest.permission.INTERNET}
+        ActivityCompat.requestPermissions(MainActivity.this, permissions, 10);
+        
+        
+        
+###  Request permissions result ###
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        if (requestCode == 10 && grantResults.length > 0) {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                            //permission 0 granted
+                }
+        }
+    }
+    
+    
+    
+    
+###########################                                            ###########################
+###########################           MENU                       ###########################
+###########################                                            ###########################
+    
+
+
+### Menu XML ###
+
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/group" android:checkableBehavior="all">
+        <item android:id="@+id/menu_archive"
+            android:title="Archive" />
+        <item android:id="@+id/menu_delete"
+            android:title="Delete" />
+    </group>
+    <item android:id="@+id/file"
+        android:title="Main Menu" >
+        <menu>
+            <item android:id="@+id/create_new"
+                android:title="Create" />
+            <item android:id="@+id/open"
+                android:title="Open" />
+        </menu>
+    </item>
+
+</menu>
+
+
+
+
+### Options Menu ###
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.simple_menu, menu);
+        return true;
+    }
+
+
+
+
+###  Options Menu Item Selected  ###
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_delete:
+                if (item.isChecked()) item.setChecked(false);
+                else item.setChecked(true);
+                return true;
+            case R.id.menu_archive:
+                if (item.isChecked()) item.setChecked(false);
+                else item.setChecked(true);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+
+### Context Menu ###
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getMenuInflater().inflate(R.menu.simple_menu, menu);
+    }
+    
+    
+    
+###  Context Menu Item Selected  ###
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+    
+    
+###########################                                            ###########################
+###########################           ArrayAdapter           ###########################
+###########################                                            ###########################
+
+
+###  Simple Array Adapter with items ###
+
+    ArrayList<String> items = new ArrayList<>();
+    ArrayAdapter<String> itemsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items);
+
+
+
+### Adapter on data change  ###
+    
+    itemsAdapter.notifyDataSetChanged();
+    
+
+
+###########################                                            ###########################
+###########################           ListView                   ###########################
+###########################                                            ###########################
+
+
+
+###  ListView  XML  ###
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/list_view"
+        android:dividerHeight="4dp">
+    </ListView>
+
+
+
+###  ListView  ###
+
+    ListView lv = findViewById(R.id.list_view);
+    lv.setAdapter(itemsAdapter);
+    
+    
+
+###  ListView item long click ###
+
+        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                return false;
+            }
+        });
+
+
+
+###########################                                            ###########################
+###########################          CustomAdapter        ###########################
+###########################                                            ###########################
+
+
+###  CustomAdapter view template  ###
+
+###  Data Model Class  ###
+
+public class User {
+    String username;
+    String password;
+    public User(String name, String password){
+        this.username = name;
+        this.password = password;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+}
+
+
+
+### XML Template  ###
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Username"
+        android:layout_weight="1"/>
+    <TextView
+        android:id="@+id/password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Password"
+        android:layout_weight="1"/>
+</LinearLayout>
+
+
+
+### CustomAdapter class ###
+
+public class UserAdapter extends ArrayAdapter<User> {
+    protected UserAdapter(Context context, ArrayList<User> data) {
+        super(context,0,data);
+    }
+
+    @Override
+    public View getView(int position,View convertView, ViewGroup parent) {
+        User dm = getItem(position);
+        if (convertView == null){
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.model_template,parent,false);
+        }
+        TextView tvUsername = convertView.findViewById(R.id.username);
+        TextView tvPassword = convertView.findViewById(R.id.password);
+        // Populate the data into the template view using the data object
+        tvUsername.setText(dm.getUsername());
+        tvPassword.setText(dm.getPassword());
+        // Return the completed view to render on screen
+        return convertView;
+    }
+}
+
+### Initialize CustomAdapter  ###
+
+   ArrayList<User> users = new ArrayList<>();
+    CustomAdapter ca = new CustomAdapter(this.getApplicationContext(), users);
+    lv.setAdapter(ca)
+
+
+
+
+###########################                                            ###########################
+###########################          OkHttp3                     ###########################
+###########################                                            ###########################
+
+### implement lib  ###
+
+       implementation 'com.squareup.okhttp3:okhttp:3.9.1'
+       
+       
+
+###  Initialise OkHttpClient and declare Request ###
+
+           OkHttpClient cl;
+           Request rq;
+           cl = new OkHttpClient();
+           String URL = "the endpoint"
+           
+
+
+###   Initialise URL, Request and make GET call  ###
+
+        rq = new Request.Builder().url(URL).build();
+        cl.newCall(rq).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()){
+                }
+            }
+         });
+         
+         
+         
+###   OkHttp3 POST  request###
+
+
+        MediaType json = MediaType.parse("application/json");
+        JSONObject ob = new JSONObject();
+        
+        //add data to json object
+        
+        RequestBody bod = RequestBody.create(json,ob.toString());
+        request = new Request.Builder()
+                            .url("http://192.168.1.16:5000/sign")
+                            .post(bod)
+                            .build();
+
+
+
+###########################                                            ###########################
+###########################          Camera                     ###########################
+###########################                                            ###########################
+
+
+ImageView im;
+String currentPhotoPath;
+
+### Start intent for capture ###
+
+
+static final int REQUEST_TAKE_PHOTO = 1;
+
+private void dispatchTakePictureIntent() {
+    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+        startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+    }
+}
+
+
+### Get intents result ###
+
+           
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+        Bundle extras = data.getExtras();
+        Bitmap imageBitmap = (Bitmap) extras.get("data");
+        im.setImageBitmap(imageBitmap);
+    }
+}
+
+
+### create file function ###
+
+private File createImageFile() throws IOException {
+    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+    String imageFileName = "JPEG_" + timeStamp + "_";
+    File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+    File image = File.createTempFile(
+        imageFileName,  /* prefix */
+        ".jpg",         /* suffix */
+        storageDir      /* directory */
+    );
+
+    currentPhotoPath = image.getAbsolutePath();
+    return image;
+}
+
+
+### new capture function ###
+    private void dispatchTakePictureIntent1() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+
+            }
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.iakovosds.facesentiment",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }
+    }
+    
+    
+    ### manifest provider declare (child of application )###
+    
+            <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.iakovosds.facesentiment"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/paths"></meta-data>
+        </provider> 
+
+
+### paths XML ### 
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <external-path name="my_images" path="Android/data/com.iakovosds.facesentiment/files/Pictures" />
+</paths>
+           
+           
+           
