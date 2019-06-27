@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".stressActivity">
+
+    <TextView
+        android:id="@+id/statusView"
+        android:layout_width="65dp"
+        android:layout_height="55dp"
+        android:layout_weight="1"
+        android:text="Status: " />
+
+    <TextView
+        android:id="@+id/pingView"
+        android:layout_width="65dp"
+        android:layout_height="55dp"
+        android:layout_weight="1"
+        android:text="Ping: " />
+
+    <TextView
+        android:id="@+id/clientsView"
+        android:layout_width="65dp"
+        android:layout_height="55dp"
+        android:layout_weight="1"
+        android:text="Clients: " />
+
+    <TextView
+        android:id="@+id/reqsView"
+        android:layout_width="65dp"
+        android:layout_height="55dp"
+        android:layout_weight="1"
+        android:text="Requests per second: " />
+
+    <Button
+        android:id="@+id/stopTestButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="STOP TEST" />
+</LinearLayout>

@@ -62,9 +62,15 @@ public class submitActivity extends AppCompatActivity {
                     cl = new OkHttpClient.Builder()
                             .build();
 
-                    Intent i = getIntent();
+                    final Intent i = getIntent();
                     name = i.getStringExtra("username");
                     pass = i.getStringExtra("password");
+
+                    final Intent newIntent = new Intent(submitActivity.this, stressActivity.class);
+                    newIntent.putExtra("username", name);
+                    newIntent.putExtra("password", pass);
+                    newIntent.putExtra("url", urlText.getText().toString());
+
 
 
                     ob.put("username", name);
@@ -98,16 +104,19 @@ public class submitActivity extends AppCompatActivity {
 
                             if (response.isSuccessful()){
 
+
                                 try{
+                                    startActivity(newIntent);
 
-                                    final JSONObject ob = new JSONObject(response.body().string());
 
-                                    if(ob.get("status").equals("notInSession")){
+                                    JSONObject ob = new JSONObject(response.body().string());
+                                    if(ob.get("status").equals("submissionSuccess")){
 
                                         runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                status.setText("Not in session");
+                                                status.setText("Login Success");
+                                                startActivity(newIntent);
                                             }
                                         });
 
@@ -115,7 +124,7 @@ public class submitActivity extends AppCompatActivity {
                                         runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                status.setText(ob.toString());
+                                                status.setText("Submission Fail");
                                             }
                                         });
                                     }
