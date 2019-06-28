@@ -40,7 +40,7 @@ public class stressActivity extends AppCompatActivity {
     TextView cliV;
     TextView reqV;
     int threads=1;
-    long requests=0;
+    long requests=1;
     long time=1;
     OkHttpClient cl;
     OkHttpClient cl2;

@@ -15,12 +15,11 @@
         android:layout_marginTop="50sp"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/statusText"
-            android:layout_width="151dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textSize="24sp" />
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="match_parent"
+            android:layout_height="112dp"
+            app:srcCompat="@drawable/alogin" />
 
         <EditText
             android:id="@+id/usernameInput"
@@ -55,6 +54,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="REGISTER" />
+
+        <TextView
+            android:id="@+id/statusText"
+            android:layout_width="151dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="24sp" />
 
     </LinearLayout>
 
