@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="Please Submit Url"/>
+            android:text="Please Submit Target Url"/>
 
         <EditText
             android:id="@+id/urlText"
@@ -27,9 +27,9 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:gravity="center"
-            android:inputType="textPersonName"
+            android:inputType="textUri"
             android:text=""
-            android:autofillHints="https://example.com"/>
+            android:hint="https://example.com"/>
 
         <Button
             android:id="@+id/submitButton"

@@ -8,37 +8,47 @@
     tools:context=".stressActivity">
 
     <TextView
+        android:layout_marginTop="30sp"
         android:id="@+id/statusView"
-        android:layout_width="65dp"
+        android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_weight="1"
-        android:text="Status: " />
+        android:textAlignment="center"
+        android:text="Status: "
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/pingView"
-        android:layout_width="65dp"
+        android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_weight="1"
-        android:text="Ping: " />
+        android:textAlignment="center"
+        android:text="Ping: "
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/clientsView"
-        android:layout_width="65dp"
+        android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_weight="1"
-        android:text="Clients: " />
+        android:textAlignment="center"
+        android:text="Clients: "
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/reqsView"
-        android:layout_width="65dp"
+        android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_weight="1"
-        android:text="Requests per second: " />
+        android:textAlignment="center"
+        android:text="Requests per second: "
+        android:textStyle="bold"/>
 
     <Button
         android:id="@+id/stopTestButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="STOP TEST" />
+        android:text="STOP TRAFFIC"
+        android:textAlignment="center" />
 </LinearLayout>

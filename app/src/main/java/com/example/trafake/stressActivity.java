@@ -1,30 +1,21 @@
 package com.example.trafake;
-
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.ButtonBarLayout;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -33,6 +24,12 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+
+
+// This is the final activity
+// Here the traffic generation for items in the Pool is performed
+// Users here can see real time statistics regarding their target website's behaviour under load
+// Traffic generation can be stopped at any time
 
 public class stressActivity extends AppCompatActivity {
 
@@ -49,15 +46,16 @@ public class stressActivity extends AppCompatActivity {
     OkHttpClient cl2;
     Request rq;
     Request rq2;
-    ArrayList<String> targets = new ArrayList<String>();
+    ArrayList<String> targets = new ArrayList<>();
     static String name;
     static String pass;
     Button stopButton;
 
+    // Trafake server url
     static String URL = "http://trafake.ddns.net:5555";
+
+    // Target website variable init
     static String url;
-
-
 
 
     @Override
@@ -72,27 +70,27 @@ public class stressActivity extends AppCompatActivity {
 
 
 
-
-        Intent intentacles = getIntent();
-        name = intentacles.getStringExtra("username");
-        pass = intentacles.getStringExtra("password");
-        url = intentacles.getStringExtra("url");
-
-
-        Log.d("OUTY", pass);
+        // Get user credentials and target url from Intent
+        Intent intentPrev = getIntent();
+        name = intentPrev.getStringExtra("username");
+        pass = intentPrev.getStringExtra("password");
+        url = intentPrev.getStringExtra("url");
 
 
+        // Stop Traffic button press
         stopButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 try {
 
+                    // Fresh request client
                     JSONObject ob = new JSONObject();
                     cl2 = new OkHttpClient.Builder()
                             .build();
 
 
-
+                    // Build stop traffic request payload
                     ob.put("username", name);
                     ob.put("password", pass);
 
@@ -100,13 +98,13 @@ public class stressActivity extends AppCompatActivity {
                     RequestBody body = RequestBody.create(json,ob.toString());
 
 
-
+                    // Stop traffic request
                     rq2 = new Request.Builder()
                             .url(URL+"/resetPool")
                             .post(body)
                             .build();
 
-
+                    // Perform request
                     cl2.newCall(rq2).enqueue(new Callback() {
 
                         @Override
@@ -119,6 +117,8 @@ public class stressActivity extends AppCompatActivity {
 
 
                             Log.d("OUTY", response.body().string());
+
+                            // Exit to previous Activity
                             finish();
                             System.exit(0);
 
@@ -133,10 +133,7 @@ public class stressActivity extends AppCompatActivity {
         });
 
 
-
-
-
-
+        // Initialize threads to be used for traffic generation / status information
         try {
             PThread pthread = new PThread();
             pthread.start();
@@ -174,8 +171,10 @@ public class stressActivity extends AppCompatActivity {
 
     }
 
+    // Rate of requests performed towards target website calculation thread
     class RThread extends Thread{
         private AtomicBoolean running = new AtomicBoolean(true);
+
         @Override
         public void run() {
             while (running.get()) {
@@ -201,6 +200,9 @@ public class stressActivity extends AppCompatActivity {
         }
     }
 
+
+    // Target website responsiveness calculation thread using ping - ICMP packets
+    // Target website availability (online/offline) gets determined here
     class PThread extends  Thread {
         private AtomicBoolean running = new AtomicBoolean(true);
 
@@ -226,14 +228,14 @@ public class stressActivity extends AppCompatActivity {
                 if(p.waitFor()!=0) {
                     handler.post(new Runnable() {
                         public void run() {
-                            statusV.setText("Status: Offline");
+                            statusV.setText("Target Website Status: Offline");
                         }
                     });
                 }
                 else{
                     handler.post(new Runnable() {
                         public void run() {
-                            statusV.setText("Status: Online");
+                            statusV.setText("Target Website Status: Online");
                         }
                     });
                 }
@@ -252,17 +254,18 @@ public class stressActivity extends AppCompatActivity {
             final String fres = res;
             handler.post(new Runnable() {
                 public void run() {
-                    pingV.setText(fres.split(" time ")[1]);
+                    pingV.setText("Website responsiveness: " + fres.split(" time ")[1]);
                 }
             });
 
         }
     }
 
+
+    // Traffic generation thread. This thread goes through all of the urls pulled from the API Pool
+    // and performs GET requests with a 5 sec request timeout limit (in case a website goes offline)
     class MThread extends Thread{
         private AtomicBoolean running = new AtomicBoolean(true);
-
-
 
         @Override
         public void run() {
@@ -292,10 +295,11 @@ public class stressActivity extends AppCompatActivity {
         }
     }
 
+
+    // This thread "pulls" the URL Pool from the API in set intervals
+    // Number of traffic generating clients gets calculated here
     class QThread extends Thread {
-
         private AtomicBoolean running = new AtomicBoolean(true);
-
 
 
         @Override
@@ -313,26 +317,25 @@ public class stressActivity extends AppCompatActivity {
 
 
         public void query() throws Exception {
+
             JSONObject ob = new JSONObject();
             cl = new OkHttpClient.Builder()
                     .build();
 
-
-
-
+            // Build request payload
             ob.put("username", name);
             ob.put("password", pass);
 
             MediaType json = MediaType.parse("application/json");
             RequestBody body = RequestBody.create(json,ob.toString());
 
-
-
+            // Get urls from Pool request
             rq = new Request.Builder()
-                    .url("http://trafake.ddns.net:5555"+"/getPool")
+                    .url(URL+"/getPool")
                     .post(body)
                     .build();
 
+            // Perform request
             cl.newCall(rq).enqueue(new Callback() {
 
                 @Override
@@ -344,15 +347,11 @@ public class stressActivity extends AppCompatActivity {
                 public void onResponse(Call call, Response response) throws IOException {
 
 
-
-
-
                     if (response.isSuccessful()){
 
                         try{
 
                             targets.clear();
-
                             final JSONObject ob = new JSONObject(response.body().string());
                             JSONArray jsonArray = (JSONArray)ob.get("pool");
 
@@ -363,12 +362,12 @@ public class stressActivity extends AppCompatActivity {
                                 }
                             }
 
+                            // Debug
                             Log.d("OUTY", targets.toString());
-
 
                             handler.post(new Runnable() {
                                 public void run() {
-                                    cliV.setText("Clients: " + targets.size());
+                                    cliV.setText("Number of Traffic Generating Clients: " + targets.size());
                                 }
                             });
 
@@ -378,8 +377,6 @@ public class stressActivity extends AppCompatActivity {
                     }
                 }
             });
-
-
 
             Thread.sleep(10000);
         }
